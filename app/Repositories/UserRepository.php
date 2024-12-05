@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\UserRepositoryInterface;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -12,8 +13,26 @@ class UserRepository implements UserRepositoryInterface
         //
     }
 
-    public function store(array $user): User
+    public function store(array $userData): User
     {
-        return $this->model->create($user);
+        $userData['password'] = Hash::make($userData['password']);
+
+        return $this->model->create($userData);
+    }
+
+    public function update(array $userData): ?User
+    {
+        $user = $this->model->find($userData['id']);
+
+        if ($user) {
+            $user->update([
+                'name' => $userData['name'],
+                'email' => $userData['email'],
+            ]);
+
+            return $user;
+        }
+
+        return null;
     }
 }

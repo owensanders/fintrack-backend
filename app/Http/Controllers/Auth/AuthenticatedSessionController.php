@@ -18,12 +18,12 @@ class AuthenticatedSessionController extends Controller
 
     public function login(LoginRequest $request): JsonResponse
     {
-        [$user, $token] = $this->authenticationService->login($request);
+        $authData = $this->authenticationService->login($request);
 
         return response()->json([
             'message' => 'Login successful',
-            'user' => $user,
-            'token' => $token,
+            'user' => $authData['user'],
+            'token' => $authData['token'],
         ]);
     }
 
@@ -38,12 +38,12 @@ class AuthenticatedSessionController extends Controller
 
     public function register(RegisterRequest $request): JsonResponse
     {
-        [$user, $token] = $this->authenticationService->register($request);
+        $authData = $this->authenticationService->register($request);
 
         return response()->json([
             'message' => 'Registration successful.',
-            'user' => $user,
-            'token' => $token,
+            'user' => $authData['user'],
+            'token' => $authData['token'],
         ]);
     }
 }
