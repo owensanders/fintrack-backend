@@ -43,7 +43,7 @@ class AuthenticationService implements AuthenticationServiceInterface
 
     public function register(Request $request): array
     {
-        $userDto = UserDto::fromRequest($request)->toArray();
+        $userDto = UserDto::fromRequest($request);
         $user = $this->userRepository->store($userDto);
 
         Auth::login($user);

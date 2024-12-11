@@ -2,22 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\DataTransferObjects\UserDto;
 use App\Http\Requests\UpdateUserRequest;
-use App\Interfaces\UserRepositoryInterface;
+use App\Services\UserService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
-    public function __construct(private UserRepositoryInterface $userRepository)
+    public function __construct(private UserService $userService)
     {
     }
 
+    /**
+     * @throws Exception
+     */
     public function update(UpdateUserRequest $request): JsonResponse
     {
-        $userData = UserDto::fromRequest($request)->toArray();
-        $updatedUser = $this->userRepository->update($userData);
+        $updatedUser = $this->userService->update($request);
 
-        return response()->json(UserDto::fromModel($updatedUser));
+        if($updatedUser) {
+            return response()->json($updatedUser);
+        }
+
+        return response()->json('There was an error while updating the user', 500);
     }
 }
