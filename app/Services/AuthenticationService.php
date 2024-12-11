@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthenticationService implements AuthenticationServiceInterface
 {
-    public function __construct(private UserRepositoryInterface $userRepository)
+    public function __construct(private readonly UserRepositoryInterface $userRepository)
     {
         //
     }
