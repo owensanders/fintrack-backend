@@ -16,7 +16,7 @@
 <ol>
   <li>
     <p><strong>Clone the repository</strong></p>
-    <pre><code>git clone https://github.com/your-username/fintrack-backend.git
+    <pre><code>git clone https://github.com/owensanders/fintrack-backend.git
 cd fintrack-backend</code></pre>
   </li>
   
