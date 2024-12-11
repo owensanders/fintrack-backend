@@ -9,7 +9,7 @@ use Illuminate\Http\JsonResponse;
 
 class UserExpensesController extends Controller
 {
-    public function __construct(private UserExpensesServiceInterface $userExpensesService)
+    public function __construct(private readonly UserExpensesServiceInterface $userExpensesService)
     {
     }
 
