@@ -4,6 +4,7 @@ namespace App\DataTransferObjects;
 
 use App\Models\UserExpense;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 readonly class ExpenseDto
 {
@@ -20,7 +21,7 @@ readonly class ExpenseDto
     {
         return new self(
             id: $request->input('id'),
-            userId: $request->get('user_id'),
+            userId: $request->get('user_id', Auth::id()),
             expenseName: $request->get('expense_name'),
             expenseAmount: $request->get('expense_amount'),
         );

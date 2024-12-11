@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\DataTransferObjects\ExpenseDto;
 use App\Interfaces\UserExpenseRepositoryInterface;
 use App\Models\UserExpense;
 
@@ -12,28 +13,26 @@ class UserExpenseRepository implements UserExpenseRepositoryInterface
         //
     }
 
-    public function store(array $expense): UserExpense
+    public function store(ExpenseDto $expenseDto): ExpenseDto
     {
-        return $this->model->create($expense);
+        $newExpense = $this->model->create($expenseDto->toArray());
+        return ExpenseDto::fromModel($newExpense);
     }
 
     public function destroy(int $id): bool
     {
-        return $this->model->destroy($id);
+        return $this->model->destroy($id) > 0;
     }
 
-    public function update(int $id, array $expense): bool
+    public function update(int $id, ExpenseDto $expenseDto): bool
     {
-        $userExpense = $this->model::find($id);
+        $userExpense = $this->model->find($id);
 
         if (!$userExpense) {
             return false;
         }
 
-        $userExpense->update([
-            'expense_name' => $expense['expense_name'],
-            'expense_amount' => $expense['expense_amount'],
-        ]);
+        $userExpense->update($expenseDto->toArray());
 
         return true;
     }
