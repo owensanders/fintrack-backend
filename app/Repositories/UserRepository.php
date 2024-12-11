@@ -28,6 +28,7 @@ class UserRepository implements UserRepositoryInterface
             $user->update([
                 'name' => $userData['name'],
                 'email' => $userData['email'],
+                'monthly_income' => $userData['monthly_income'],
             ]);
 
             return $user;

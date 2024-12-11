@@ -12,6 +12,8 @@ readonly class UserDto
         public ?int $id,
         public string $name,
         public string $email,
+        public float $monthlyIncome,
+        public ?array $expenses = null,
         public ?string $password = null,
     ) {
         //
@@ -27,6 +29,8 @@ readonly class UserDto
             id: $user->id,
             name: $user->name,
             email: $user->email,
+            monthlyIncome: $user->monthly_income,
+            expenses: $user->expenses,
         );
     }
 
@@ -36,6 +40,7 @@ readonly class UserDto
             id: $request->input('id'),
             name: $request->get('name'),
             email: $request->get('email'),
+            monthlyIncome: $request->get('monthly_income', 0.00),
             password: $request->get('password'),
         );
     }
@@ -46,6 +51,8 @@ readonly class UserDto
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
+            'monthly_income' => $this->monthlyIncome,
+            'expenses' => $this->expenses,
             'password' => $this->password,
         ];
     }

@@ -25,6 +25,7 @@ class UpdateUserRequest extends FormRequest
                 'max:255',
                 'unique:' . User::class . ',email,' . $this->id,
             ],
+            'monthly_income' => ['required', 'numeric', 'min:0', 'max:999999.99'],
         ];
     }
 }

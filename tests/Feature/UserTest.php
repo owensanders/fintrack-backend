@@ -23,10 +23,11 @@ class UserTest extends TestCase
             'email' => $oldEmail,
         ]);
 
-        $response = $this->actingAs($user)->patchJson('my-profile/update', [
+        $response = $this->actingAs($user)->putJson('my-profile', [
             'id' => $user->id,
             'name' => $newName,
             'email' => $newEmail,
+            'monthly_income' => 2568.34,
         ]);
 
         $response->assertStatus(200);
@@ -34,6 +35,7 @@ class UserTest extends TestCase
             'id' => $user->id,
             'name' => $newName,
             'email' => $newEmail,
+            'monthly_income' => 2568.34,
         ]);
         $this->assertDatabaseMissing('users', [
             'id' => $user->id,
