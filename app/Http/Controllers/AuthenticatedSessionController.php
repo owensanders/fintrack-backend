@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\AuthenticationException;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Interfaces\AuthenticationServiceInterface;
@@ -17,32 +18,44 @@ class AuthenticatedSessionController extends Controller
 
     public function login(LoginRequest $request): JsonResponse
     {
-        $authData = $this->authenticationService->login($request);
+        try {
+            $authData = $this->authenticationService->login($request);
 
-        return response()->json([
-            'message' => 'Login successful',
-            'user' => $authData['user'],
-            'token' => $authData['token'],
-        ]);
+            return response()->json([
+                'message' => 'Login successful',
+                'user' => $authData['user'],
+                'token' => $authData['token'],
+            ]);
+        } catch (AuthenticationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
     }
 
     public function logout(Request $request): JsonResponse
     {
-        $this->authenticationService->logout($request);
+        try {
+            $this->authenticationService->logout($request);
 
-        return response()->json([
-            'message' => 'Logout successful.',
-        ]);
+            return response()->json([
+                'message' => 'Logout successful.',
+            ]);
+        } catch (AuthenticationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
     }
 
     public function register(RegisterRequest $request): JsonResponse
     {
-        $authData = $this->authenticationService->register($request);
+        try {
+            $authData = $this->authenticationService->register($request);
 
-        return response()->json([
-            'message' => 'Registration successful.',
-            'user' => $authData['user'],
-            'token' => $authData['token'],
-        ]);
+            return response()->json([
+                'message' => 'Registration successful.',
+                'user' => $authData['user'],
+                'token' => $authData['token'],
+            ]);
+        } catch (AuthenticationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
     }
 }

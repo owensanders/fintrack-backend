@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Exceptions\UnauthorisedUpdateException;
 use App\Models\User;
 use App\Interfaces\UserServiceInterface;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -148,4 +149,26 @@ class UserTest extends TestCase
 
         $response->assertStatus(422);
     }
+
+    public function test_user_cannot_update_others_profile_due_to_unauthorised_update(): void
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $this->mock(UserServiceInterface::class)
+            ->shouldReceive('update')
+            ->once()
+            ->andThrow(new UnauthorisedUpdateException());
+
+        $response = $this->actingAs($user)->putJson('my-profile', [
+            'id' => $otherUser->id,
+            'name' => $this->faker->name,
+            'email' => $this->faker->unique()->safeEmail,
+            'monthly_income' => 2568.34,
+        ]);
+
+        $response->assertStatus(403);
+        $response->assertJson(['message' => 'You are not authorised to update this profile.']);
+    }
+
 }
