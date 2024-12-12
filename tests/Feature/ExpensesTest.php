@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Models\UserExpense;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -128,20 +129,13 @@ class ExpensesTest extends TestCase
         $originalExpenseName = $this->faker->word;
         $originalExpenseAmount = 429922.23;
 
-        $response = $this->actingAs($user)->postJson('user-expenses', [
+        $originalExpense = UserExpense::factory()->create([
             'user_id' => $user->id,
             'expense_name' => $originalExpenseName,
             'expense_amount' => $originalExpenseAmount,
         ]);
 
-        $response->assertStatus(201);
-        $this->assertDatabaseHas('user_expenses', [
-            'user_id' => $user->id,
-            'expense_name' => $originalExpenseName,
-            'expense_amount' => $originalExpenseAmount,
-        ]);
-
-        $expenseId = $user->expenses[0]['id'];
+        $expenseId = $originalExpense->id;
         $newExpenseName = $this->faker->word;
         $newExpenseAmount = 600.53;
 
@@ -165,20 +159,13 @@ class ExpensesTest extends TestCase
         $originalExpenseName = $this->faker->word;
         $originalExpenseAmount = 3456.76;
 
-        $response = $this->actingAs($user)->postJson('user-expenses', [
+        $originalExpense = UserExpense::factory()->create([
             'user_id' => $user->id,
             'expense_name' => $originalExpenseName,
             'expense_amount' => $originalExpenseAmount,
         ]);
 
-        $response->assertStatus(201);
-        $this->assertDatabaseHas('user_expenses', [
-            'user_id' => $user->id,
-            'expense_name' => $originalExpenseName,
-            'expense_amount' => $originalExpenseAmount,
-        ]);
-
-        $expenseId = $user->expenses[0]['id'];
+        $expenseId = $originalExpense->id;
         $newExpenseName = null;
         $newExpenseAmount = 1400.22;
 
@@ -202,20 +189,13 @@ class ExpensesTest extends TestCase
         $originalExpenseName = $this->faker->word;
         $originalExpenseAmount = 100.54;
 
-        $response = $this->actingAs($user)->postJson('user-expenses', [
+        $originalExpense = UserExpense::factory()->create([
             'user_id' => $user->id,
             'expense_name' => $originalExpenseName,
             'expense_amount' => $originalExpenseAmount,
         ]);
 
-        $response->assertStatus(201);
-        $this->assertDatabaseHas('user_expenses', [
-            'user_id' => $user->id,
-            'expense_name' => $originalExpenseName,
-            'expense_amount' => $originalExpenseAmount,
-        ]);
-
-        $expenseId = $user->expenses[0]['id'];
+        $expenseId = $originalExpense->id;
         $newExpenseName = $this->faker->word;
         $newExpenseAmount = null;
 
@@ -231,5 +211,16 @@ class ExpensesTest extends TestCase
             'expense_name' => $newExpenseName,
             'expense_amount' => $newExpenseAmount,
         ]);
+    }
+
+    public function test_user_expense_belongs_to_user(): void
+    {
+        $user = User::factory()->create();
+        $expense = UserExpense::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $this->assertEquals($user->id, $expense->user->id);
+        $this->assertInstanceOf(User::class, $expense->user);
     }
 }

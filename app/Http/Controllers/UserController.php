@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateUserRequest;
 use App\Interfaces\UserServiceInterface;
-use Exception;
+use App\Exceptions\UnauthorizedUpdateException;
 use Illuminate\Http\JsonResponse;
+use Exception;
 
 class UserController extends Controller
 {
@@ -13,17 +14,18 @@ class UserController extends Controller
     {
     }
 
-    /**
-     * @throws Exception
-     */
     public function update(UpdateUserRequest $request): JsonResponse
     {
-        $updatedUser = $this->userService->update($request);
+        try {
+            $updatedUser = $this->userService->update($request);
 
-        if($updatedUser) {
-            return response()->json($updatedUser);
+            if ($updatedUser) {
+                return response()->json($updatedUser);
+            }
+
+            return response()->json(['message' => 'The updated user could no be found.'], 404);
+        } catch (UnauthorizedUpdateException $e) {
+            return response()->json(['message' => $e->getMessage()], 403);
         }
-
-        return response()->json('There was an error while updating the user', 500);
     }
 }
