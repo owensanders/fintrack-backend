@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class UnauthorizedUpdateException extends Exception
+class UnauthorisedUpdateException extends Exception
 {
     protected $message = 'You are not authorized to update this profile.';
     protected $code = 403;

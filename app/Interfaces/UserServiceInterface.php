@@ -3,13 +3,13 @@
 namespace App\Interfaces;
 
 use App\DataTransferObjects\UserDto;
-use App\Exceptions\UnauthorizedUpdateException;
+use App\Exceptions\UnauthorisedUpdateException;
 use Illuminate\Http\Request;
 
 interface UserServiceInterface
 {
     /**
-     * @throws UnauthorizedUpdateException
+     * @throws UnauthorisedUpdateException
      */
     public function update(Request $request): ?UserDto;
 }

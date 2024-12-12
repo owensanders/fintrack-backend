@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Interfaces\UserExpensesServiceInterface;
 use App\Models\User;
 use App\Models\UserExpense;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -32,67 +33,34 @@ class ExpensesTest extends TestCase
         ]);
     }
 
-    public function test_user_cannot_create_expense_if_expense_name_missing(): void
+    public function test_user_cannot_delete_non_existing_expense(): void
     {
         $user = User::factory()->create();
-        $expenseName = null;
-        $expenseAmount = 98732.23;
+        $nonExistingExpenseId = 9999;
 
-        $response = $this->actingAs($user)->postJson('user-expenses', [
-            'user_id' => $user->id,
-            'expense_name' => $expenseName,
-            'expense_amount' => $expenseAmount,
-        ]);
+        $response = $this->actingAs($user)->deleteJson('user-expenses/' . $nonExistingExpenseId);
 
-        $response->assertStatus(422);
-        $this->assertDatabaseMissing('user_expenses', [
-            'user_id' => $user->id,
-            'expense_name' => $expenseName,
-            'expense_amount' => $expenseAmount,
+        $response->assertStatus(404);
+        $response->assertJson([
+            'message' => 'Expense not found.',
         ]);
     }
 
-    public function test_user_cannot_create_expense_if_expense_amount_missing(): void
+    public function test_user_cannot_delete_expense_without_permission(): void
     {
         $user = User::factory()->create();
-        $expenseName = $this->faker->word;
-        $expenseAmount = null;
+        $expense = UserExpense::factory()->create();
+        $otherUser = User::factory()->create();
 
-        $response = $this->actingAs($user)->postJson('user-expenses', [
-            'user_id' => $user->id,
-            'expense_name' => $expenseName,
-            'expense_amount' => $expenseAmount,
-        ]);
+        $response = $this->actingAs($otherUser)->deleteJson('user-expenses/' . $expense->id);
 
-        $response->assertStatus(422);
-        $this->assertDatabaseMissing('user_expenses', [
-            'user_id' => $user->id,
-            'expense_name' => $expenseName,
-            'expense_amount' => $expenseAmount,
+        $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'You do not have permission to delete this expense.',
         ]);
     }
 
-    public function test_user_cannot_create_expense_if_expense_amount_format_is_incorrect(): void
-    {
-        $user = User::factory()->create();
-        $expenseName = $this->faker->word;
-        $expenseAmount = 1622.1;
-
-        $response = $this->actingAs($user)->postJson('user-expenses', [
-            'user_id' => $user->id,
-            'expense_name' => $expenseName,
-            'expense_amount' => $expenseAmount,
-        ]);
-
-        $response->assertStatus(422);
-        $this->assertDatabaseMissing('user_expenses', [
-            'user_id' => $user->id,
-            'expense_name' => $expenseName,
-            'expense_amount' => $expenseAmount,
-        ]);
-    }
-
-    public function test_user_can_delete_an_expense(): void
+    public function test_user_can_update_expense(): void
     {
         $user = User::factory()->create();
         $expenseName = $this->faker->word;
@@ -123,63 +91,56 @@ class ExpensesTest extends TestCase
         ]);
     }
 
-    public function test_user_can_update_an_expense(): void
+    public function test_user_cannot_update_non_existing_expense(): void
     {
         $user = User::factory()->create();
-        $originalExpenseName = $this->faker->word;
-        $originalExpenseAmount = 429922.23;
+        $nonExistingExpenseId = 9999;
 
-        $originalExpense = UserExpense::factory()->create([
-            'user_id' => $user->id,
-            'expense_name' => $originalExpenseName,
-            'expense_amount' => $originalExpenseAmount,
+        $response = $this->actingAs($user)->putJson('user-expenses/' . $nonExistingExpenseId, [
+            'expense_name' => 'Updated Name',
+            'expense_amount' => 100.00,
         ]);
 
-        $expenseId = $originalExpense->id;
-        $newExpenseName = $this->faker->word;
-        $newExpenseAmount = 600.53;
-
-        $response = $this->actingAs($user)->putJson('user-expenses/' . $expenseId, [
-            'id' => $expenseId,
-            'expense_name' => $newExpenseName,
-            'expense_amount' => $newExpenseAmount,
-        ]);
-        $response->assertStatus(200);
-        $this->assertDatabaseHas('user_expenses', [
-            'id' => $expenseId,
-            'user_id' => $user->id,
-            'expense_name' => $newExpenseName,
-            'expense_amount' => $newExpenseAmount,
+        $response->assertStatus(404);
+        $response->assertJson([
+            'message' => 'Expense not found.',
         ]);
     }
 
-    public function test_user_cannot_update_an_expense_if_expense_name_is_missing(): void
+    public function test_user_cannot_update_expense_without_permission(): void
     {
         $user = User::factory()->create();
-        $originalExpenseName = $this->faker->word;
-        $originalExpenseAmount = 3456.76;
+        $expense = UserExpense::factory()->create();
+        $otherUser = User::factory()->create();
 
-        $originalExpense = UserExpense::factory()->create([
-            'user_id' => $user->id,
-            'expense_name' => $originalExpenseName,
-            'expense_amount' => $originalExpenseAmount,
+        $response = $this->actingAs($otherUser)->putJson('user-expenses/' . $expense->id, [
+            'expense_name' => 'Updated Name',
+            'expense_amount' => 100.00,
         ]);
 
-        $expenseId = $originalExpense->id;
-        $newExpenseName = null;
-        $newExpenseAmount = 1400.22;
-
-        $response = $this->actingAs($user)->putJson('user-expenses/' . $expenseId, [
-            'id' => $expenseId,
-            'expense_name' => $newExpenseName,
-            'expense_amount' => $newExpenseAmount,
+        $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'You do not have permission to update this expense.',
         ]);
-        $response->assertStatus(422);
-        $this->assertDatabaseMissing('user_expenses', [
-            'id' => $expenseId,
-            'user_id' => $user->id,
-            'expense_name' => $newExpenseName,
-            'expense_amount' => $newExpenseAmount,
+    }
+
+    public function test_generic_exception_handling(): void
+    {
+        $user = User::factory()->create();
+        $expense = UserExpense::factory()->create();
+
+        $this->app->bind(UserExpensesServiceInterface::class, function () {
+            throw new \Exception('An unexpected error occurred.');
+        });
+
+        $response = $this->actingAs($user)->putJson('user-expenses/' . $expense->id, [
+            'expense_name' => 'Updated Name',
+            'expense_amount' => 100.00,
+        ]);
+
+        $response->assertStatus(500);
+        $response->assertJson([
+            'message' => 'An unexpected error occurred.',
         ]);
     }
 

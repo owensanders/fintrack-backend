@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\DataTransferObjects\ExpenseDto;
+use App\Exceptions\UserExpenseNotFoundException;
 use App\Interfaces\UserExpenseRepositoryInterface;
 use App\Models\UserExpense;
 
@@ -10,7 +11,6 @@ class UserExpenseRepository implements UserExpenseRepositoryInterface
 {
     public function __construct(private readonly UserExpense $model)
     {
-        //
     }
 
     public function store(ExpenseDto $expenseDto): ExpenseDto
@@ -26,14 +26,18 @@ class UserExpenseRepository implements UserExpenseRepositoryInterface
 
     public function update(int $id, ExpenseDto $expenseDto): bool
     {
-        $userExpense = $this->model->find($id);
+        $userExpense = $this->find($id);
 
         if (!$userExpense) {
-            return false;
+            throw new UserExpenseNotFoundException();
         }
 
         $userExpense->update($expenseDto->toArray());
-
         return true;
+    }
+
+    public function find(int $id): ?UserExpense
+    {
+        return $this->model->find($id);
     }
 }
