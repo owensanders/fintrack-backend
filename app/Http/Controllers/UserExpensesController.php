@@ -35,9 +35,13 @@ class UserExpensesController extends Controller
 
     public function update(UpdateUserExpenseRequest $request, int $id): JsonResponse
     {
-        $this->userExpensesService->update($request, $id);
-        $userDto = $this->userExpensesService->getAuthenticatedUserDto();
+        $hasUpdated = $this->userExpensesService->update($request, $id);
 
-        return response()->json($userDto);
+        if ($hasUpdated) {
+            $userDto = $this->userExpensesService->getAuthenticatedUserDto();
+            return response()->json($userDto);
+        }
+
+        return response()->json(['message' => 'Record update unsuccessful.'], 400);
     }
 }
