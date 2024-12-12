@@ -6,7 +6,6 @@ use App\DataTransferObjects\ExpenseDto;
 use App\DataTransferObjects\UserDto;
 use App\Exceptions\UnauthorisedExpenseAccessException;
 use App\Exceptions\UserExpenseNotFoundException;
-use App\Exceptions\UnauthorizedExpenseAccessException;
 use App\Interfaces\UserExpenseRepositoryInterface;
 use App\Interfaces\UserExpensesServiceInterface;
 use Illuminate\Support\Facades\Auth;

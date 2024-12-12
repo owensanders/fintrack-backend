@@ -168,7 +168,7 @@ class UserTest extends TestCase
         ]);
 
         $response->assertStatus(403);
-        $response->assertJson(['message' => 'You are not authorized to update this profile.']);
+        $response->assertJson(['message' => 'You are not authorised to update this profile.']);
     }
 
 }
