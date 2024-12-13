@@ -29,7 +29,10 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    protected $appends = ['expenses'];
+    protected $appends = [
+        'expenses',
+        'expense_total_amount',
+    ];
 
     public function expenses(): HasMany
     {
@@ -39,5 +42,13 @@ class User extends Authenticatable
     public function getExpensesAttribute(): array
     {
         return $this->expenses()->get()->toArray();
+    }
+
+    public function getExpenseTotalAmountAttribute(): float
+    {
+        //For a larger project caching would be user here
+        return (float)$this->expenses()
+            ->selectRaw('COALESCE(SUM(expense_amount), 0) as total')
+            ->value('total');
     }
 }

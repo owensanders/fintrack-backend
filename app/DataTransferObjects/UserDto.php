@@ -13,6 +13,7 @@ readonly class UserDto
         public string $name,
         public string $email,
         public float $monthlyIncome,
+        public ?float $expenseTotalAmount = null,
         public ?array $expenses = null,
         public ?string $password = null,
     ) {
@@ -30,6 +31,7 @@ readonly class UserDto
             name: $user->name,
             email: $user->email,
             monthlyIncome: $user->monthly_income,
+            expenseTotalAmount: $user->expense_total_amount,
             expenses: $user->expenses,
         );
     }
@@ -52,6 +54,7 @@ readonly class UserDto
             'name' => $this->name,
             'email' => $this->email,
             'monthly_income' => $this->monthlyIncome,
+            'expense_total_amount' => $this->expenseTotalAmount,
             'expenses' => $this->expenses,
             'password' => $this->password,
         ];

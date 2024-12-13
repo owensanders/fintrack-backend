@@ -62,9 +62,9 @@ class UserExpensesService implements UserExpensesServiceInterface
         $this->userExpenseRepository->update($id, $expenseDto);
     }
 
-    public function getAuthenticatedUserDto(): UserDto
+    public function getAuthenticatedUserDto(): array
     {
         $user = Auth::user();
-        return UserDto::fromModel($user);
+        return UserDto::fromModel($user)->toArray();
     }
 }

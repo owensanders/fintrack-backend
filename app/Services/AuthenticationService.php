@@ -31,7 +31,7 @@ class AuthenticationService implements AuthenticationServiceInterface
             $token = $user->createToken('login-token')->plainTextToken;
 
             return [
-                'user' => UserDto::fromModel($user),
+                'user' => UserDto::fromModel($user)->toArray(),
                 'token' => $token
             ];
         } catch (BaseAuthException $e) {
@@ -70,7 +70,7 @@ class AuthenticationService implements AuthenticationServiceInterface
             $token = $user->createToken('register-token')->plainTextToken;
 
             return [
-                'user' => UserDto::fromModel($user),
+                'user' => UserDto::fromModel($user)->toArray(),
                 'token' => $token
             ];
         } catch (Exception $e) {

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserExpense;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class ExpensesTest extends TestCase
@@ -87,37 +88,6 @@ class ExpensesTest extends TestCase
 
         $response->assertStatus(422);
         $this->assertDatabaseMissing('user_expenses', [
-            'user_id' => $user->id,
-            'expense_name' => $expenseName,
-            'expense_amount' => $expenseAmount,
-        ]);
-    }
-
-    public function test_user_can_delete_an_expense(): void
-    {
-        $user = User::factory()->create();
-        $expenseName = $this->faker->word;
-        $expenseAmount = 766.23;
-
-        $response = $this->actingAs($user)->postJson('user-expenses', [
-            'user_id' => $user->id,
-            'expense_name' => $expenseName,
-            'expense_amount' => $expenseAmount,
-        ]);
-
-        $response->assertStatus(201);
-        $this->assertDatabaseHas('user_expenses', [
-            'user_id' => $user->id,
-            'expense_name' => $expenseName,
-            'expense_amount' => $expenseAmount,
-        ]);
-
-        $expenseId = $user->expenses[0]['id'];
-
-        $response = $this->actingAs($user)->deleteJson('user-expenses/' . $expenseId);
-        $response->assertStatus(200);
-        $this->assertDatabaseMissing('user_expenses', [
-            'id' => $expenseId,
             'user_id' => $user->id,
             'expense_name' => $expenseName,
             'expense_amount' => $expenseAmount,
@@ -211,7 +181,7 @@ class ExpensesTest extends TestCase
         ]);
     }
 
-    public function test_user_can_update_expense(): void
+    public function test_user_can_delete_expense(): void
     {
         $user = User::factory()->create();
         $expenseName = $this->faker->word;
@@ -334,5 +304,16 @@ class ExpensesTest extends TestCase
 
         $this->assertEquals($user->id, $expense->user->id);
         $this->assertInstanceOf(User::class, $expense->user);
+    }
+
+    public function test_user_has_expense_total_amount_attribute(): void
+    {
+        $user = User::factory()->create();
+        UserExpense::factory(3)->create([
+            'user_id' => $user->id,
+            'expense_amount' => 5000
+        ]);
+
+        $this->assertEquals(15000, $user->expense_total_amount);
     }
 }
