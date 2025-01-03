@@ -14,7 +14,9 @@ readonly class UserDto
         public string $email,
         public float $monthlyIncome,
         public ?float $expenseTotalAmount = null,
+        public ?float $savingsTotalAmount = null,
         public ?array $expenses = null,
+        public ?array $savings = null,
         public ?string $password = null,
     ) {
         //
@@ -32,7 +34,9 @@ readonly class UserDto
             email: $user->email,
             monthlyIncome: $user->monthly_income,
             expenseTotalAmount: $user->expense_total_amount,
+            savingsTotalAmount: $user->savings_total_amount,
             expenses: $user->expenses,
+            savings: $user->savings,
         );
     }
 
@@ -55,7 +59,9 @@ readonly class UserDto
             'email' => $this->email,
             'monthly_income' => $this->monthlyIncome,
             'expense_total_amount' => $this->expenseTotalAmount,
+            'savings_total_amount' => $this->savingsTotalAmount,
             'expenses' => $this->expenses,
+            'savings' => $this->savings,
             'password' => $this->password,
         ];
     }

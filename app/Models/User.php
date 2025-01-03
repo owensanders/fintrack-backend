@@ -39,9 +39,19 @@ class User extends Authenticatable
         return $this->hasMany(UserExpense::class);
     }
 
+    public function savings(): HasMany
+    {
+        return $this->hasMany(UserSaving::class);
+    }
+
     public function getExpensesAttribute(): array
     {
         return $this->expenses()->get()->toArray();
+    }
+
+    public function getSavingsAttribute(): array
+    {
+        return $this->savings()->get()->toArray();
     }
 
     public function getExpenseTotalAmountAttribute(): float
@@ -49,6 +59,14 @@ class User extends Authenticatable
         //For a larger project caching would be user here
         return (float)$this->expenses()
             ->selectRaw('COALESCE(SUM(expense_amount), 0) as total')
+            ->value('total');
+    }
+
+    public function getSavingsTotalAmountAttribute(): float
+    {
+        //For a larger project caching would be user here
+        return (float)$this->savings()
+            ->selectRaw('COALESCE(SUM(saving_amount), 0) as total')
             ->value('total');
     }
 }
