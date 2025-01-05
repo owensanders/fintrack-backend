@@ -1,7 +1,7 @@
 <h1>Fintrack Backend</h1>
 
 <p>Fintrack is a finance app that allows users to manage their finances and receive tips and tricks on how to manage money better.</p>
-<p><strong>THIS PROJECT IS NOT COMPLETE.</strong></p>
+<p>This app is the backend, the frontend is done under Fintrack Frontend. First set up the backend then the frontend.</p>
 
 <h2>Requirements</h2>
 <p>Before running the application, ensure you have the following installed on your machine:</p>
@@ -10,6 +10,7 @@
   <li><a href="https://docs.docker.com/compose/install/">Docker Compose</a></li>
 </ul>
 <p><strong>Note:</strong> Laravel Sail is included with the project, so <strong>no need for a separate PHP installation.</strong></p>
+<p>You will need composer to install the projects dependencies.</p>
 
 <h2>Setting Up the Backend</h2>
 
@@ -18,12 +19,6 @@
     <p><strong>Clone the repository</strong></p>
     <pre><code>git clone https://github.com/owensanders/fintrack-backend.git
 cd fintrack-backend</code></pre>
-  </li>
-  
-  <li>
-    <p><strong>Install dependencies</strong></p>
-    <p>Run the following command to install the required PHP dependencies via Composer (inside the Sail container):</p>
-    <pre><code>./vendor/bin/sail install</code></pre>
   </li>
   
   <li>
