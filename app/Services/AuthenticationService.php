@@ -34,10 +34,8 @@ class AuthenticationService implements AuthenticationServiceInterface
                 'user' => UserDto::fromModel($user)->toArray(),
                 'token' => $token
             ];
-        } catch (BaseAuthException $e) {
-            throw new AuthenticationException('Invalid credentials provided.', 401, $e);
         } catch (Exception $e) {
-            throw new AuthenticationException('An unexpected error occurred during login.', 500, $e);
+            throw new AuthenticationException('Invalid credentials provided.', 401, $e);
         }
     }
 
